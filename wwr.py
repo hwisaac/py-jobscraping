@@ -26,7 +26,7 @@ def li_to_info(li)->dir:
         title = title.string
     else:
         return None
-    link = li.find_all('a')[1]['href']
+    link = 'https://weworkremotely.com/' + li.find_all('a')[1]['href']
     
     if not link:
         return None
@@ -54,6 +54,7 @@ def extract_wwr_brands(search) ->list:
         # li_to_info 함수로 정보를 꺼내고 None 타입이 아닌경우만 jobs 리스트에 넣는다
         x = li_to_info(li_tag)
         if x:
+            print('wwr searching : ',x)
             jobs.append(x)
 
     return jobs
