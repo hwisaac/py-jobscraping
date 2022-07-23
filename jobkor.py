@@ -1,8 +1,7 @@
-from urllib.parse import _NetlocResultMixinBytes
 import requests
 from bs4 import BeautifulSoup
 import re
-import save
+
 
 
 # re_exp = re.compile('[^/\\:?*"><|.%]')
@@ -44,16 +43,7 @@ def extract_jobkor_jobs(search) ->list:
     
     for item in li_list_post:
         x= div_to_inf(item.find('div', {'class': 'post'}))
-        print(x)
-        jobs.append(x)    
-    
-
+        if x:
+            jobs.append(x)    
+    print(len(jobs), 'jobskorea jobs')
     return jobs
-
-
-
-# # 모든 브랜드 사이트에서 모든 jobs 을 저장하기.
-# def scraping_all_jobs(brands):
-    
-#     for brand in brands:
-#         save.save_to_jobs_file(brand)

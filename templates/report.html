@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>u{
+        font-size: 1.3em;
+    }
+    a.export{
+                  
+      background-color:cadetblue;
+      border-radius: 10px;
+      
+      font-weight: bold;
+      color: white;
+      text-decoration: none;
+      padding: 5px;
+    }
+    a.export:hover{
+        color: cadetblue;
+        background-color: #f3f3f3;
+        border: 1px solid cadetblue;
+    }
+    form {
+        margin: 10px;
+    }
+    .styled-table {
+     border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 1.2em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+    .styled-table thead tr {
+    
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+    font-size: 1.2em;
+    }
+    .styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+    }
+
+    .styled-table tbody tr:nth-of-type(even) {
+        background-color: #f3f3f3;
+    }
+
+    .styled-table tbody tr:last-of-type {
+        border-bottom: 2px solid #009879;
+    }
+    tbody td{
+        height: 5vh;
+    }
+    .styled-table tbody td:first-child{
+        width: 40vw;
+    }
+    .styled-table tbody tr:hover {
+    font-weight: bold;
+    color: #009879;
+    
+    } 
+    td a{
+      
+      background-color:burlywood;
+      border-radius: 10px;
+      align-content: center;
+      font-size: 0.5em;
+      padding: 4px;
+      font-weight: bold;
+      color: white;
+      text-decoration: none;
+    }
+
+
+
+    </style>
+</head>
+<body>
+    <h1>Search Results</h1>
+    <!-- 랜더링할때 변수를 받아올 자리는 다음처럼-->
+    <h3>Found {{resultsNumber}} results for :  <u>{{searchingBy}}</u></h3>
+    <a class ='export' href="/export?word={{searchingBy}}">Export to CSV </a>
+    <form action="/report" method="get">
+        <input name="word" placeholder="What job do you want?" >
+        <button>Search</button>
+    </form>
+
+    <table class="styled-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Company</th>
+                <th>Link</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for job in jobs%}
+            <tr>
+            <td>{{job.title}}</td>
+            <td>{{job.company}}</td>
+            <td><a href="{{job.link}}" target="_blank">Apply</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>

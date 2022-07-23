@@ -1,14 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 import re
-import csv
-import save
 
-# re_exp = re.compile('[^/\\:?*"><|.%]')
+
 nre_exp_str = '[/\\:?*"><|.%]'
 URL = 'https://weworkremotely.com/remote-jobs/search?utf8=%E2%9C%93&term='
 
-brand_test_url='http://footlockerkr.alba.co.kr/'
 
 # li -> {company, title, link} 정보 dict 를 반환한다.
 def li_to_info(li)->dir:
@@ -26,16 +23,19 @@ def li_to_info(li)->dir:
         title = title.string
     else:
         return None
-    link = 'https://weworkremotely.com/' + li.find_all('a')[1]['href']
     
-    if not link:
+    try:
+        link = 'https://weworkremotely.com/' + li.find_all('a')[1]['href']
+    
+        if not link:
+            return None
+    except:
         return None
 
     return {'company':company, 'title': title, 'link' : link}
 
 # (검색어)-> brands 메인페이징에서 jobs 뽑아내기
-def extract_wwr_brands(search) ->list:
-    
+def extract_wwr_jobs(search) ->list:
     data = requests.get(URL+search)
     # 데이터 추출해서 html 알려주기
     soup = BeautifulSoup( data.text , 'html.parser')
@@ -54,69 +54,6 @@ def extract_wwr_brands(search) ->list:
         # li_to_info 함수로 정보를 꺼내고 None 타입이 아닌경우만 jobs 리스트에 넣는다
         x = li_to_info(li_tag)
         if x:
-            print('wwr searching : ',x)
             jobs.append(x)
-
+    print(len(jobs), 'wwr jobs')
     return jobs
-
-extract_wwr_brands('java')
-
-
-# brand_link -> jobs={local,title,company,pay}각각의 brand 사이트 마다 jobs 정보 뽑기 
-def extract_alba_jobs(brand_link) -> dir:
-    jobs=[]
-    result = requests.get(brand_link)
-
-    # 자료를 뽑자
-    soup = BeautifulSoup( result.text , 'html.parser')
-    data = soup.find_all("tr", {'style': ""})
-    data = data[1:]
-    for da in data:
-        local  = da.find("td", {'class': 'local'})
-        if local == None:
-            local = "None"
-        else:
-            local = local.text
-
-        title = da.find("span", {'class': 'title'})
-        if title == None:
-            title = "None"
-        else:
-            title = title.text
-
-        company = da.find("span", {'class': 'company'})
-        if company == None:
-            company = "None"
-        else:
-            company = company.text
-            # company = re_exp.match(company).group()
-            company = re.sub(nre_exp_str,'_', company)
-
-        pay = da.find("span", {'class': 'number'})
-        if pay == None:
-            pay = "None"
-        else:
-            pay = pay.text
-            
-        reg_date = da.find("td", {'class': 'regDate'})
-        if reg_date == None:
-            reg_date = "None"
-        else:
-            reg_date = reg_date.text
-
-        time = da.find("span" , {'class': 'time'})
-        if time == None:
-            time = "None"
-        else:
-            time = time.text
-
-        jobs.append( {'local':local, 'title':title, 'company':company, 'pay':pay, 'reg_date':reg_date} )
-    
-    return jobs
-
-
-# 모든 브랜드 사이트에서 모든 jobs 을 저장하기.
-def scraping_all_jobs(brands):
-    
-    for brand in brands:
-        save.save_to_jobs_file(brand)
